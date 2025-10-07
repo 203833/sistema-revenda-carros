@@ -1,4 +1,4 @@
-import { AppDataSource } from '../config/datasource';
+const { AppDataSource } = require('../config/datasource');
 
 beforeAll(async () => {
   if (!AppDataSource.isInitialized) {

@@ -1,7 +1,7 @@
-import { Customer } from '../entities/Customer';
-import { Car } from '../entities/Car';
-import { Sale } from '../entities/Sale';
-import { User } from '../entities/User';
+const { Customer } = require('../entities/Customer');
+const { Car } = require('../entities/Car');
+const { Sale } = require('../entities/Sale');
+const { User } = require('../entities/User');
 
 jest.mock('../config/datasource', () => ({
   AppDataSource: {
