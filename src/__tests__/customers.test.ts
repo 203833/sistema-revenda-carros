@@ -16,11 +16,11 @@ describe('Customers API', () => {
   });
 
   beforeEach(async () => {
-    // Clean database
+
     await AppDataSource.getRepository(Customer).clear();
     await AppDataSource.getRepository(User).clear();
 
-    // Create test user and get token
+
     const hashedPassword = await bcrypt.hash('password123', 10);
     const user = await AppDataSource.getRepository(User).save({
       username: 'testuser',
@@ -37,7 +37,7 @@ describe('Customers API', () => {
 
   describe('GET /api/v1/customers', () => {
     it('should get all customers (public endpoint)', async () => {
-      // Create test customers
+
       await AppDataSource.getRepository(Customer).save([
         {
           name: 'John Doe',
@@ -112,7 +112,7 @@ describe('Customers API', () => {
     });
 
     it('should not create customer with duplicate CPF', async () => {
-      // Create customer first
+
       await AppDataSource.getRepository(Customer).save({
         name: 'John Doe',
         cpf: '12345678901',
@@ -141,7 +141,7 @@ describe('Customers API', () => {
     it('should require all fields', async () => {
       const customerData = {
         name: 'John Doe',
-        // Missing other fields
+
       };
 
       const response = await request(app)
@@ -243,7 +243,7 @@ describe('Customers API', () => {
 
       expect(response.text).toBe('Customer deleted successfully');
 
-      // Verify customer was deleted
+
       const deletedCustomer = await AppDataSource.getRepository(Customer).findOneBy({ id: customer.id });
       expect(deletedCustomer).toBeNull();
     });

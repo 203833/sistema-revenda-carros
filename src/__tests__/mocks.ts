@@ -1,4 +1,7 @@
-// Mock do banco para testes sem PostgreSQL
+import { Customer } from '../models/Customer';
+import { Car } from '../models/Car';
+import { Sale } from '../models/Sale';
+import { User } from '../models/User';
 jest.mock('../config/datasource', () => ({
   AppDataSource: {
     isInitialized: true,

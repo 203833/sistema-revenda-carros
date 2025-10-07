@@ -54,7 +54,7 @@ export class SaleController {
 
       await repo().save(sale)
 
-      // Update car status if sale is completed
+
       if (Number(status) === 3) {
         car.status = 'Vendido'
         await carRepo().save(car)
@@ -92,7 +92,7 @@ export class SaleController {
       
       await repo().save(sale)
 
-      // Update car status based on sale status
+
       if (Number(status) === 3 && oldStatus !== 3) {
         sale.car.status = 'Vendido'
         await carRepo().save(sale.car)
@@ -121,7 +121,7 @@ export class SaleController {
         return res.status(404).send("Sale not found")
       }
 
-      // If sale was completed, make car available again
+
       if (sale.status === 3) {
         sale.car.status = 'Disponível'
         await carRepo().save(sale.car)

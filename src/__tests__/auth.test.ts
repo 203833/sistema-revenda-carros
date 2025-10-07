@@ -12,7 +12,6 @@ describe('Authentication', () => {
   });
 
   beforeEach(async () => {
-    // Clean users table
     await AppDataSource.getRepository(User).clear();
   });
 
@@ -31,7 +30,7 @@ describe('Authentication', () => {
 
       expect(response.body.message).toBe('User created successfully');
 
-      // Verify user was created in database
+
       const user = await AppDataSource.getRepository(User).findOneBy({ username: 'testuser' });
       expect(user).toBeTruthy();
       expect(user?.username).toBe('testuser');
@@ -39,7 +38,7 @@ describe('Authentication', () => {
     });
 
     it('should not register user with existing username', async () => {
-      // Create user first
+
       const hashedPassword = await bcrypt.hash('password123', 10);
       await AppDataSource.getRepository(User).save({
         username: 'testuser',
@@ -73,7 +72,7 @@ describe('Authentication', () => {
 
   describe('POST /api/v1/auth/login', () => {
     beforeEach(async () => {
-      // Create test user
+
       const hashedPassword = await bcrypt.hash('password123', 10);
       await AppDataSource.getRepository(User).save({
         username: 'testuser',

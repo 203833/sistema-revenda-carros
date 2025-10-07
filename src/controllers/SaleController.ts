@@ -48,7 +48,6 @@ export class SaleController {
 
       await sale.save();
 
-      // Update car status if sale is completed
       if (Number(status) === 3) {
         car.status = 'Vendido';
         await car.save();
@@ -83,7 +82,6 @@ export class SaleController {
       
       await sale.save();
 
-      // Update car status based on sale status
       if (Number(status) === 3 && oldStatus !== 3) {
         const car = await Car.findById(sale.car);
         if (car) {
@@ -115,7 +113,6 @@ export class SaleController {
         return res.status(404).send("Sale not found");
       }
 
-      // If sale was completed, make car available again
       if (sale.status === 3) {
         const car = await Car.findById(sale.car);
         if (car) {
