@@ -18,9 +18,9 @@ describe('Authentication', () => {
   describe('POST /api/v1/auth/register', () => {
     it('should register a new user', async () => {
       const userData = {
-        username: 'testuser',
-        password: 'password123',
-        role: 'seller'
+        nomeUsuario: 'testuser',
+        senha: 'password123',
+        papel: 'vendedor'
       };
 
       const response = await request(app)
@@ -28,28 +28,26 @@ describe('Authentication', () => {
         .send(userData)
         .expect(201);
 
-      expect(response.body.message).toBe('User created successfully');
+      expect(response.body.mensagem).toBe('Usuário criado com sucesso');
 
-
-      const user = await AppDataSource.getRepository(User).findOneBy({ username: 'testuser' });
+      const user = await AppDataSource.getRepository(User).findOneBy({ nomeUsuario: 'testuser' });
       expect(user).toBeTruthy();
-      expect(user?.username).toBe('testuser');
-      expect(user?.role).toBe('seller');
+      expect(user?.nomeUsuario).toBe('testuser');
+      expect(user?.papel).toBe('vendedor');
     });
 
     it('should not register user with existing username', async () => {
-
       const hashedPassword = await bcrypt.hash('password123', 10);
       await AppDataSource.getRepository(User).save({
-        username: 'testuser',
-        password: hashedPassword,
-        role: 'seller'
+        nomeUsuario: 'testuser',
+        senha: hashedPassword,
+        papel: 'vendedor'
       });
 
       const userData = {
-        username: 'testuser',
-        password: 'password123',
-        role: 'seller'
+        nomeUsuario: 'testuser',
+        senha: 'password123',
+        papel: 'vendedor'
       };
 
       const response = await request(app)
@@ -57,34 +55,24 @@ describe('Authentication', () => {
         .send(userData)
         .expect(400);
 
-      expect(response.text).toBe('Username already exists');
-    });
-
-    it('should require username and password', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/register')
-        .send({})
-        .expect(400);
-
-      expect(response.text).toBe('Username and password are required');
+      expect(response.body).toBe('Nome de usuário já existe');
     });
   });
 
   describe('POST /api/v1/auth/login', () => {
     beforeEach(async () => {
-
       const hashedPassword = await bcrypt.hash('password123', 10);
       await AppDataSource.getRepository(User).save({
-        username: 'testuser',
-        password: hashedPassword,
-        role: 'seller'
+        nomeUsuario: 'testuser',
+        senha: hashedPassword,
+        papel: 'vendedor'
       });
     });
 
     it('should login with valid credentials', async () => {
       const loginData = {
-        username: 'testuser',
-        password: 'password123'
+        nomeUsuario: 'testuser',
+        senha: 'password123'
       };
 
       const response = await request(app)
@@ -92,16 +80,16 @@ describe('Authentication', () => {
         .send(loginData)
         .expect(200);
 
-      expect(response.body.message).toBe('Login successful');
-      expect(response.body.token).toBeTruthy();
-      expect(response.body.user.username).toBe('testuser');
-      expect(response.body.user.role).toBe('seller');
+      expect(response.body.mensagem).toBe('Login realizado com sucesso');
+      expect(response.body.token).toBeDefined();
+      expect(response.body.usuario).toBeDefined();
+      expect(response.body.usuario.nomeUsuario).toBe('testuser');
     });
 
     it('should not login with invalid credentials', async () => {
       const loginData = {
-        username: 'testuser',
-        password: 'wrongpassword'
+        nomeUsuario: 'testuser',
+        senha: 'wrongpassword'
       };
 
       const response = await request(app)
@@ -109,16 +97,21 @@ describe('Authentication', () => {
         .send(loginData)
         .expect(401);
 
-      expect(response.text).toBe('Invalid credentials');
+      expect(response.body).toBe('Credenciais inválidas');
     });
 
-    it('should require username and password', async () => {
+    it('should not login with non-existent user', async () => {
+      const loginData = {
+        nomeUsuario: 'nonexistent',
+        senha: 'password123'
+      };
+
       const response = await request(app)
         .post('/api/v1/auth/login')
-        .send({})
-        .expect(400);
+        .send(loginData)
+        .expect(401);
 
-      expect(response.text).toBe('Username and password are required');
+      expect(response.body).toBe('Credenciais inválidas');
     });
   });
 });

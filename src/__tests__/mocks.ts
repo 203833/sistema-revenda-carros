@@ -1,7 +1,8 @@
-import { Customer } from '../models/Customer';
-import { Car } from '../models/Car';
-import { Sale } from '../models/Sale';
-import { User } from '../models/User';
+import { Customer } from '../entities/Customer';
+import { Car } from '../entities/Car';
+import { Sale } from '../entities/Sale';
+import { User } from '../entities/User';
+
 jest.mock('../config/datasource', () => ({
   AppDataSource: {
     isInitialized: true,
