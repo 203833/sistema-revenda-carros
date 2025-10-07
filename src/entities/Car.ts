@@ -7,28 +7,28 @@ export class Car {
     id!: number
 
     @Column()
-    brand!: string
+    marca!: string
 
     @Column()
-    model!: string
+    modelo!: string
 
     @Column()
-    year!: number
+    ano!: number
 
     @Column()
-    color!: string
+    cor!: string
 
     @Column('decimal', { precision: 10, scale: 2 })
-    price!: number
+    preco!: number
 
     @Column()
-    mileage!: number
+    quilometragem!: number
 
     @Column()
-    fuelType!: string
+    tipoCombustivel!: string
 
     @Column()
-    transmission!: string
+    transmissao!: string
 
     @Column({ default: 'Disponível' })
     status!: string

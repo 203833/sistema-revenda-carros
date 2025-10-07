@@ -1,77 +1,83 @@
 import { Request, Response } from "express";
-import { User } from "../models/User";
-import jwt from "jsonwebtoken";
+import { AppDataSource } from "../config/datasource";
+import { User } from "../entities/User";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export class AuthController {
   static async login(req: Request, res: Response) {
-    const { username, password } = req.body;
+    const { nomeUsuario, senha } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).send("Username and password are required");
+    if (!nomeUsuario || !senha) {
+      return res.status(400).send("Nome de usuário e senha são obrigatórios");
     }
 
     try {
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(401).send("Invalid credentials");
+      const userRepository = AppDataSource.getRepository(User);
+      const usuario = await userRepository.findOne({
+        where: { nomeUsuario }
+      });
+
+      if (!usuario) {
+        return res.status(401).send("Credenciais inválidas");
       }
 
-      const isValidPassword = await bcrypt.compare(password, user.password);
-      if (!isValidPassword) {
-        return res.status(401).send("Invalid credentials");
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+      if (!senhaValida) {
+        return res.status(401).send("Credenciais inválidas");
       }
 
       const token = jwt.sign(
-        { 
-          id: user._id, 
-          username: user.username, 
-          role: user.role 
-        },
-        process.env.JWT_SECRET || 'default-secret',
-        { expiresIn: '24h' }
+        { id: usuario.id, nomeUsuario: usuario.nomeUsuario, papel: usuario.papel },
+        process.env.JWT_SECRET || "chave-secreta-padrao",
+        { expiresIn: "24h" }
       );
 
       res.status(200).json({
-        message: "Login successful",
+        mensagem: "Login realizado com sucesso",
         token,
-        user: {
-          id: user._id,
-          username: user.username,
-          role: user.role
+        usuario: {
+          id: usuario.id,
+          nomeUsuario: usuario.nomeUsuario,
+          papel: usuario.papel
         }
       });
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error during login");
+      res.status(500).send("Erro durante o login");
     }
   }
 
   static async register(req: Request, res: Response) {
-    const { username, password, role = 'seller' } = req.body;
+    const { nomeUsuario, senha, papel = "vendedor" } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).send("Username and password are required");
+    if (!nomeUsuario || !senha) {
+      return res.status(400).send("Nome de usuário e senha são obrigatórios");
     }
 
     try {
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        return res.status(400).send("Username already exists");
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = new User({
-        username,
-        password: hashedPassword,
-        role
+      const userRepository = AppDataSource.getRepository(User);
+      
+      const usuarioExistente = await userRepository.findOne({
+        where: { nomeUsuario }
       });
 
-      await user.save();
-      res.status(201).json({ message: "User created successfully" });
+      if (usuarioExistente) {
+        return res.status(400).send("Nome de usuário já existe");
+      }
+
+      const senhaCriptografada = await bcrypt.hash(senha, 10);
+      const novoUsuario = userRepository.create({
+        nomeUsuario,
+        senha: senhaCriptografada,
+        papel
+      });
+
+      await userRepository.save(novoUsuario);
+      res.status(201).json({ mensagem: "Usuário criado com sucesso" });
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error creating user");
+      res.status(500).send("Erro ao criar usuário");
     }
   }
 }

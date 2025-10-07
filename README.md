@@ -1,146 +1,109 @@
-# 🚗 Sistema de Revenda de Carros
+# Sistema de Revenda de Carros
 
-API REST desenvolvida em Node.js com TypeScript para gerenciamento de revenda de carros, incluindo clientes, veículos e vendas.
+API REST para gerenciamento de uma revenda de carros com autenticação JWT.
 
-## 🛠️ Tecnologias Utilizadas
+## Funcionalidades
 
-- **Node.js** + **Express.js**
-- **TypeScript**
-- **PostgreSQL** + **TypeORM**
-- **JWT** para autenticação
-- **bcrypt** para hash de senhas
-- **Jest** + **Supertest** para testes
+- **Clientes**: CRUD completo para gerenciar clientes
+- **Carros**: CRUD completo para gerenciar veículos
+- **Vendas**: CRUD completo para gerenciar vendas
+- **Autenticação**: Login com JWT para proteger endpoints sensíveis
+- **Testes**: Testes automatizados com Jest e Supertest
 
-## 📋 Funcionalidades
+## Tecnologias
 
-### 🔐 Autenticação
-- Login com JWT
-- Registro de usuários (vendedores/administradores)
-- Proteção de endpoints sensíveis
+- Node.js + Express.js
+- TypeScript
+- PostgreSQL + TypeORM
+- JWT para autenticação
+- Jest + Supertest para testes
+- Bcrypt para hash de senhas
 
-### 👥 Clientes
-- CRUD completo de clientes
-- Validação de CPF único
-- Busca por ID com histórico de compras
+## Instalação
 
-### 🚙 Carros
-- CRUD completo de veículos
-- Busca por marca
-- Filtro de carros disponíveis
-- Controle de status (Disponível/Vendido/Reservado)
-
-### 💰 Vendas
-- CRUD completo de vendas
-- Relacionamento cliente-carro
-- Controle de status da venda
-- Atualização automática do status do carro
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-- Node.js (v18+)
-- PostgreSQL
-- npm ou yarn
-
-### Instalação
+1. Clone o repositório
+2. Instale as dependências:
 ```bash
-# Instalar dependências
 npm install
-
-# Configurar variáveis de ambiente
-cp .env.example .env
-# Editar .env com suas configurações de banco
 ```
 
-### Executar
-```bash
-# Desenvolvimento
-npm run dev
+3. Configure o banco PostgreSQL:
+   - Crie um banco chamado `car_dealership`
+   - Copie `env.example` para `.env`
+   - Configure suas credenciais do PostgreSQL
 
-# Produção
+4. Execute as migrações:
+```bash
+npm run typeorm migration:run
+```
+
+## Execução
+
+### Desenvolvimento
+```bash
+npm run dev
+```
+
+### Produção
+```bash
 npm run build
 npm start
-
-# Testes
-npm test
-npm run test:watch
-npm run test:coverage
 ```
 
-## 📚 Endpoints da API
+### Testes
+```bash
+npm test
+```
 
-### Autenticação
+## Endpoints
+
+### Autenticação (Públicos)
 - `POST /api/v1/auth/login` - Login
 - `POST /api/v1/auth/register` - Registro
 
-### Clientes (Públicos: GET, Protegidos: POST/PUT/DELETE)
+### Clientes
 - `GET /api/v1/customers` - Listar clientes
 - `GET /api/v1/customers/:id` - Buscar cliente por ID
-- `POST /api/v1/customers` - Criar cliente
-- `PUT /api/v1/customers/:id` - Atualizar cliente
-- `DELETE /api/v1/customers/:id` - Deletar cliente
+- `POST /api/v1/customers` - Criar cliente (Protegido)
+- `PUT /api/v1/customers/:id` - Atualizar cliente (Protegido)
+- `DELETE /api/v1/customers/:id` - Excluir cliente (Protegido)
 
-### Carros (Públicos: GET, Protegidos: POST/PUT/DELETE)
+### Carros
 - `GET /api/v1/cars` - Listar carros
 - `GET /api/v1/cars/:id` - Buscar carro por ID
-- `GET /api/v1/cars/available` - Carros disponíveis
+- `GET /api/v1/cars/available` - Listar carros disponíveis
 - `GET /api/v1/cars/brand/:brand` - Buscar por marca
-- `POST /api/v1/cars` - Criar carro
-- `PUT /api/v1/cars/:id` - Atualizar carro
-- `DELETE /api/v1/cars/:id` - Deletar carro
+- `POST /api/v1/cars` - Criar carro (Protegido)
+- `PUT /api/v1/cars/:id` - Atualizar carro (Protegido)
+- `DELETE /api/v1/cars/:id` - Excluir carro (Protegido)
 
-### Vendas (Públicos: GET, Protegidos: POST/PUT/DELETE)
+### Vendas
 - `GET /api/v1/sales` - Listar vendas
 - `GET /api/v1/sales/:id` - Buscar venda por ID
 - `GET /api/v1/sales/customer/:customerId` - Vendas por cliente
 - `GET /api/v1/sales/status/:status` - Vendas por status
-- `POST /api/v1/sales/:customerId/:carId` - Criar venda
-- `PUT /api/v1/sales/:id` - Atualizar venda
-- `DELETE /api/v1/sales/:id` - Deletar venda
+- `POST /api/v1/sales/customer/:customerId/car/:carId` - Criar venda (Protegido)
+- `PUT /api/v1/sales/:id` - Atualizar venda (Protegido)
+- `DELETE /api/v1/sales/:id` - Excluir venda (Protegido)
 
-## 🔒 Autenticação
+## Autenticação
 
 Para acessar endpoints protegidos, inclua o token JWT no header:
 ```
-Authorization: Bearer <seu_token_jwt>
+Authorization: Bearer SEU_TOKEN_AQUI
 ```
 
-## 📊 Status das Vendas
-- **0**: Orçamento/Interesse
-- **1**: Negociação
-- **2**: Contrato assinado
-- **3**: Venda concluída
+## Status das Vendas
 
-## 🧪 Testes
+- `0` - Orçamento/Interesse
+- `1` - Negociação
+- `2` - Contrato assinado
+- `3` - Venda concluída
 
-O projeto inclui testes automatizados com Jest e Supertest:
-- Testes de autenticação
-- Testes de CRUD para clientes
-- Testes de proteção de endpoints
-- Cobertura de código
+## Banco de Dados
 
-## 📝 Estrutura do Projeto
-
-```
-src/
-├── __tests__/          # Testes automatizados
-├── config/            # Configurações (banco de dados)
-├── controllers/       # Lógica de negócio
-├── entities/          # Modelos do banco de dados
-├── middleware/        # Middlewares (autenticação)
-├── routes/           # Definição de rotas
-├── app.ts           # Configuração do Express
-└── server.ts        # Servidor principal
-```
-
-## 🎯 Requisitos Atendidos
-
-✅ **Persistência**: 3 recursos com relacionamentos (Customer, Car, Sale)  
-✅ **Autenticação**: JWT com login e proteção de endpoints  
-✅ **Testes**: Jest + Supertest implementados  
-✅ **Código**: Estrutura MVC bem organizada  
-✅ **Endpoints**: GET públicos, POST/PUT/DELETE protegidos  
-
-## 👨‍💻 Desenvolvido por
-
-Sistema desenvolvido como trabalho acadêmico, transformando uma API base de delivery em um sistema completo de revenda de carros.
+O sistema usa PostgreSQL com TypeORM. As entidades são:
+- **Customer**: Clientes
+- **Car**: Carros
+- **Sale**: Vendas
+- **User**: Usuários do sistema

@@ -8,7 +8,7 @@ export class Customer {
   id!: number
 
   @Column()
-  name!: string
+  nome!: string
 
   @Column({ unique: true })
   cpf!: string
@@ -17,10 +17,10 @@ export class Customer {
   email!: string
 
   @Column()
-  phone!: string
+  telefone!: string
 
   @Column()
-  address!: string
+  endereco!: string
 
   @OneToMany(() => Sale, sale => sale.customer)
   public sales: Sale[];

@@ -8,13 +8,13 @@ export class Sale {
     id!: number
 
     @Column()
-    saleDate!: Date
+    dataVenda!: Date
 
     @Column('decimal', { precision: 10, scale: 2 })
-    salePrice!: number
+    precoVenda!: number
 
     @Column()
-    paymentMethod!: string
+    metodoPagamento!: string
 
     @Column()
     status!: number
@@ -24,12 +24,4 @@ export class Sale {
 
     @ManyToOne(() => Car, (car) => car.sales)
     public car: Car
-
-    /*
-    Status da Venda:
-    0 - Orçamento/Interesse
-    1 - Negociação
-    2 - Contrato assinado
-    3 - Venda concluída
-    */
 }

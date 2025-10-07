@@ -1,133 +1,153 @@
 import { Request, Response } from "express";
-import { Car } from "../models/Car";
+import { AppDataSource } from "../config/datasource";
+import { Car } from "../entities/Car";
 
 export class CarController {
   static async getAll(req: Request, res: Response) {
     try {
-      const cars = await Car.find()
-        .populate('sales')
-        .sort({ brand: 1, model: 1 });
+      const carRepository = AppDataSource.getRepository(Car);
+      const cars = await carRepository.find({
+        relations: ["sales"]
+      });
       res.status(200).json(cars);
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error while fetching cars");
-    }
-  }
-
-  static async create(req: Request, res: Response) {
-    const { brand, carModel, year, color, price, mileage, fuelType, transmission } = req.body;
-
-    if (!brand || !carModel || !year || !color || !price || !mileage || !fuelType || !transmission) {
-      return res.status(400).send("All fields are required");
-    }
-
-    try {
-      const car = new Car({
-        brand, carModel, year, color, price, mileage, fuelType, transmission
-      });
-      await car.save();
-      res.status(201).json({ message: "Car created!", car });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Error while creating new car");
-    }
-  }
-
-  static async update(req: Request, res: Response) {
-    const id = req.params.id;
-    const { brand, carModel, year, color, price, mileage, fuelType, transmission, status } = req.body;
-
-    if (!brand || !carModel || !year || !color || !price || !mileage || !fuelType || !transmission) {
-      return res.status(400).send("All fields are required");
-    }
-
-    try {
-      const car = await Car.findById(id);
-      if (!car) {
-        return res.status(404).send("Car not found");
-      }
-
-      car.brand = brand;
-      car.carModel = carModel;
-      car.year = year;
-      car.color = color;
-      car.price = price;
-      car.mileage = mileage;
-      car.fuelType = fuelType;
-      car.transmission = transmission;
-      if (status) car.status = status;
-      
-      await car.save();
-      res.status(200).json({ message: "Car updated!", car });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Error updating car " + id);
-    }
-  }
-
-  static async delete(req: Request, res: Response) {
-    const id = req.params.id;
-
-    try {
-      const car = await Car.findById(id);
-      if (!car) {
-        return res.status(404).send("Car not found");
-      }
-
-      await Car.findByIdAndDelete(id);
-      res.status(200).send("Car deleted successfully");
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Error removing car " + id);
+      res.status(500).send("Erro ao buscar carros");
     }
   }
 
   static async getById(req: Request, res: Response) {
-    const id = req.params.id;
-
+    const id = parseInt(req.params.id);
     try {
-      const car = await Car.findById(id)
-        .populate('sales')
-        .populate({
-          path: 'sales',
-          populate: {
-            path: 'customer',
-            model: 'Customer'
-          }
-        });
+      const carRepository = AppDataSource.getRepository(Car);
+      const car = await carRepository.findOne({
+        where: { id },
+        relations: ["sales"]
+      });
       
       if (!car) {
-        return res.status(404).send("Car not found");
+        return res.status(404).send("Carro não encontrado");
       }
-
+      
       res.status(200).json(car);
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error searching car " + id);
+      res.status(500).send("Erro ao buscar carro");
     }
   }
 
   static async getAvailable(req: Request, res: Response) {
     try {
-      const cars = await Car.find({ status: 'Disponível' })
-        .sort({ brand: 1, model: 1 });
+      const carRepository = AppDataSource.getRepository(Car);
+      const cars = await carRepository.find({
+        where: { status: "Disponível" },
+        relations: ["sales"]
+      });
       res.status(200).json(cars);
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error while fetching available cars");
+      res.status(500).send("Erro ao buscar carros disponíveis");
     }
   }
 
   static async searchByBrand(req: Request, res: Response) {
     const brand = req.params.brand;
-
     try {
-      const cars = await Car.find({ brand: brand })
-        .sort({ model: 1 });
+      const carRepository = AppDataSource.getRepository(Car);
+      const cars = await carRepository.find({
+        where: { marca: brand },
+        relations: ["sales"]
+      });
       res.status(200).json(cars);
     } catch (error) {
       console.log(error);
-      res.status(500).send("Error while searching cars by brand");
+      res.status(500).send("Erro ao buscar carros por marca");
+    }
+  }
+
+  static async create(req: Request, res: Response) {
+    const { marca, modelo, ano, cor, preco, quilometragem, tipoCombustivel, transmissao } = req.body;
+
+    if (!marca || !modelo || !ano || !cor || !preco || !quilometragem || !tipoCombustivel || !transmissao) {
+      return res.status(400).send("Todos os campos são obrigatórios");
+    }
+
+    try {
+      const carRepository = AppDataSource.getRepository(Car);
+      const car = carRepository.create({
+        marca,
+        modelo,
+        ano,
+        cor,
+        preco,
+        quilometragem,
+        tipoCombustivel,
+        transmissao,
+        status: "Disponível"
+      });
+
+      await carRepository.save(car);
+      res.status(201).json({ mensagem: "Carro criado com sucesso", carro: car });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Erro ao criar carro");
+    }
+  }
+
+  static async update(req: Request, res: Response) {
+    const id = parseInt(req.params.id);
+    const { marca, modelo, ano, cor, preco, quilometragem, tipoCombustivel, transmissao, status } = req.body;
+
+    if (!marca || !modelo || !ano || !cor || !preco || !quilometragem || !tipoCombustivel || !transmissao) {
+      return res.status(400).send("Todos os campos são obrigatórios");
+    }
+
+    try {
+      const carRepository = AppDataSource.getRepository(Car);
+      const car = await carRepository.findOne({
+        where: { id }
+      });
+
+      if (!car) {
+        return res.status(404).send("Carro não encontrado");
+      }
+
+      car.marca = marca;
+      car.modelo = modelo;
+      car.ano = ano;
+      car.cor = cor;
+      car.preco = preco;
+      car.quilometragem = quilometragem;
+      car.tipoCombustivel = tipoCombustivel;
+      car.transmissao = transmissao;
+      if (status) car.status = status;
+
+      await carRepository.save(car);
+      res.status(200).json({ mensagem: "Carro atualizado com sucesso", carro: car });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Erro ao atualizar carro");
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    const id = parseInt(req.params.id);
+
+    try {
+      const carRepository = AppDataSource.getRepository(Car);
+      const car = await carRepository.findOne({
+        where: { id }
+      });
+
+      if (!car) {
+        return res.status(404).send("Carro não encontrado");
+      }
+
+      await carRepository.remove(car);
+      res.status(200).send("Carro excluído com sucesso");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Erro ao excluir carro");
     }
   }
 }

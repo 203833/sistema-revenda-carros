@@ -6,11 +6,11 @@ export class User {
   id!: number
 
   @Column({ unique: true })
-  username!: string
+  nomeUsuario!: string
 
   @Column()
-  password!: string
+  senha!: string
 
   @Column()
-  role!: string // 'admin' or 'seller'
+  papel!: string
 }
