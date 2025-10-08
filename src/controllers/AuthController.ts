@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/datasource";
-import { User } from "../entities/User";
+import { Usuario } from "../entities/Usuario";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -13,7 +13,7 @@ export class AuthController {
     }
 
     try {
-      const userRepository = AppDataSource.getRepository(User);
+      const userRepository = AppDataSource.getRepository(Usuario);
       const usuario = await userRepository.findOne({
         where: { nomeUsuario }
       });
@@ -56,7 +56,7 @@ export class AuthController {
     }
 
     try {
-      const userRepository = AppDataSource.getRepository(User);
+      const userRepository = AppDataSource.getRepository(Usuario);
       
       const usuarioExistente = await userRepository.findOne({
         where: { nomeUsuario }

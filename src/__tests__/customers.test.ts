@@ -1,13 +1,13 @@
 import request from 'supertest';
 import app from '../app';
 import { AppDataSource } from '../config/datasource';
-import { Customer } from '../entities/Customer';
-import { User } from '../entities/User';
+import { Cliente } from '../entities/Cliente';
+import { Usuario } from '../entities/Usuario';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-describe('Customers API', () => {
-  let authToken: string;
+describe('API de Clientes', () => {
+  let tokenAuth: string;
 
   beforeAll(async () => {
     if (!AppDataSource.isInitialized) {
@@ -16,26 +16,26 @@ describe('Customers API', () => {
   });
 
   beforeEach(async () => {
-    await AppDataSource.getRepository(Customer).clear();
-    await AppDataSource.getRepository(User).clear();
+    await AppDataSource.getRepository(Cliente).clear();
+    await AppDataSource.getRepository(Usuario).clear();
 
     const hashedPassword = await bcrypt.hash('password123', 10);
-    const user = await AppDataSource.getRepository(User).save({
+    const user = await AppDataSource.getRepository(Usuario).save({
       nomeUsuario: 'testuser',
       senha: hashedPassword,
       papel: 'vendedor'
     });
 
-    authToken = jwt.sign(
+    tokenAuth = jwt.sign(
       { id: user.id, nomeUsuario: user.nomeUsuario, papel: user.papel },
       process.env.JWT_SECRET || 'chave-secreta-padrao',
       { expiresIn: '24h' }
     );
   });
 
-  describe('GET /api/v1/customers', () => {
-    it('should get all customers (public endpoint)', async () => {
-      await AppDataSource.getRepository(Customer).save([
+  describe('GET /api/v1/clientes', () => {
+    it('deve listar todos os clientes (endpoint público)', async () => {
+      await AppDataSource.getRepository(Cliente).save([
         {
           nome: 'João Silva',
           cpf: '12345678901',
@@ -53,7 +53,7 @@ describe('Customers API', () => {
       ]);
 
       const response = await request(app)
-        .get('/api/v1/customers')
+        .get('/api/v1/clientes')
         .expect(200);
 
       expect(response.body).toHaveLength(2);
@@ -61,18 +61,18 @@ describe('Customers API', () => {
       expect(response.body[1].nome).toBe('Maria Santos');
     });
 
-    it('should return empty array when no customers exist', async () => {
+    it('deve retornar array vazio quando não há clientes', async () => {
       const response = await request(app)
-        .get('/api/v1/customers')
+        .get('/api/v1/clientes')
         .expect(200);
 
       expect(response.body).toHaveLength(0);
     });
   });
 
-  describe('GET /api/v1/customers/:id', () => {
-    it('should get customer by id (public endpoint)', async () => {
-      const customer = await AppDataSource.getRepository(Customer).save({
+  describe('GET /api/v1/clientes/:id', () => {
+    it('deve buscar cliente por ID (endpoint público)', async () => {
+      const customer = await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -81,23 +81,23 @@ describe('Customers API', () => {
       });
 
       const response = await request(app)
-        .get(`/api/v1/customers/${customer.id}`)
+        .get(`/api/v1/clientes/${customer.id}`)
         .expect(200);
 
       expect(response.body.nome).toBe('João Silva');
       expect(response.body.cpf).toBe('12345678901');
     });
 
-    it('should return 404 for non-existent customer', async () => {
+    it('deve retornar 404 para cliente inexistente', async () => {
       const response = await request(app)
-        .get('/api/v1/customers/999')
+        .get('/api/v1/clientes/999')
         .expect(404);
 
-      expect(response.body).toBe('Cliente não encontrado');
+      expect(response.text).toBe('Cliente não encontrado');
     });
   });
 
-  describe('POST /api/v1/customers', () => {
+  describe('POST /api/v1/clientes', () => {
     it('should create a new customer (protected endpoint)', async () => {
       const customerData = {
         nome: 'João Silva',
@@ -108,8 +108,8 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .post('/api/v1/customers')
-        .set('Authorization', `Bearer ${authToken}`)
+        .post('/api/v1/clientes')
+        .set('Authorization', `Bearer ${tokenAuth}`)
         .send(customerData)
         .expect(201);
 
@@ -127,11 +127,11 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .post('/api/v1/customers')
+        .post('/api/v1/clientes')
         .send(customerData)
         .expect(401);
 
-      expect(response.body).toBe('Token de acesso obrigatório');
+      expect(response.text).toBe('Token de acesso obrigatório');
     });
 
     it('should not create customer with missing fields', async () => {
@@ -141,16 +141,16 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .post('/api/v1/customers')
-        .set('Authorization', `Bearer ${authToken}`)
+        .post('/api/v1/clientes')
+        .set('Authorization', `Bearer ${tokenAuth}`)
         .send(customerData)
         .expect(400);
 
-      expect(response.body).toBe('Todos os campos são obrigatórios');
+      expect(response.text).toBe('Todos os campos são obrigatórios');
     });
 
     it('should not create customer with duplicate CPF', async () => {
-      await AppDataSource.getRepository(Customer).save({
+      await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -167,18 +167,18 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .post('/api/v1/customers')
-        .set('Authorization', `Bearer ${authToken}`)
+        .post('/api/v1/clientes')
+        .set('Authorization', `Bearer ${tokenAuth}`)
         .send(customerData)
         .expect(400);
 
-      expect(response.body).toBe('Já existe um cliente com este CPF');
+      expect(response.text).toBe('Já existe um cliente com este CPF');
     });
   });
 
-  describe('PUT /api/v1/customers/:id', () => {
+  describe('PUT /api/v1/clientes/:id', () => {
     it('should update customer (protected endpoint)', async () => {
-      const customer = await AppDataSource.getRepository(Customer).save({
+      const customer = await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -194,8 +194,8 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .put(`/api/v1/customers/${customer.id}`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .put(`/api/v1/clientes/${customer.id}`)
+        .set('Authorization', `Bearer ${tokenAuth}`)
         .send(updateData)
         .expect(200);
 
@@ -204,7 +204,7 @@ describe('Customers API', () => {
     });
 
     it('should not update customer without authentication', async () => {
-      const customer = await AppDataSource.getRepository(Customer).save({
+      const customer = await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -220,17 +220,17 @@ describe('Customers API', () => {
       };
 
       const response = await request(app)
-        .put(`/api/v1/customers/${customer.id}`)
+        .put(`/api/v1/clientes/${customer.id}`)
         .send(updateData)
         .expect(401);
 
-      expect(response.body).toBe('Token de acesso obrigatório');
+      expect(response.text).toBe('Token de acesso obrigatório');
     });
   });
 
-  describe('DELETE /api/v1/customers/:id', () => {
+  describe('DELETE /api/v1/clientes/:id', () => {
     it('should delete customer (protected endpoint)', async () => {
-      const customer = await AppDataSource.getRepository(Customer).save({
+      const customer = await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -239,15 +239,15 @@ describe('Customers API', () => {
       });
 
       const response = await request(app)
-        .delete(`/api/v1/customers/${customer.id}`)
-        .set('Authorization', `Bearer ${authToken}`)
+        .delete(`/api/v1/clientes/${customer.id}`)
+        .set('Authorization', `Bearer ${tokenAuth}`)
         .expect(200);
 
-      expect(response.body).toBe('Cliente excluído com sucesso');
+      expect(response.text).toBe('Cliente excluído com sucesso');
     });
 
     it('should not delete customer without authentication', async () => {
-      const customer = await AppDataSource.getRepository(Customer).save({
+      const customer = await AppDataSource.getRepository(Cliente).save({
         nome: 'João Silva',
         cpf: '12345678901',
         email: 'joao@email.com',
@@ -256,10 +256,10 @@ describe('Customers API', () => {
       });
 
       const response = await request(app)
-        .delete(`/api/v1/customers/${customer.id}`)
+        .delete(`/api/v1/clientes/${customer.id}`)
         .expect(401);
 
-      expect(response.body).toBe('Token de acesso obrigatório');
+      expect(response.text).toBe('Token de acesso obrigatório');
     });
   });
 });

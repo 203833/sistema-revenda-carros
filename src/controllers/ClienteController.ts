@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/datasource";
-import { Customer } from "../entities/Customer";
+import { Cliente } from "../entities/Cliente";
 
-export class CustomerController {
+export class ClienteController {
   static async getAll(req: Request, res: Response) {
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
+      const customerRepository = AppDataSource.getRepository(Cliente);
       const customers = await customerRepository.find({
-        relations: ["sales"]
+        relations: ["vendas"]
       });
       res.status(200).json(customers);
     } catch (error) {
@@ -19,10 +19,10 @@ export class CustomerController {
   static async getById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
+      const customerRepository = AppDataSource.getRepository(Cliente);
       const customer = await customerRepository.findOne({
         where: { id },
-        relations: ["sales", "sales.car"]
+        relations: ["vendas", "vendas.carro"]
       });
       
       if (!customer) {
@@ -44,7 +44,7 @@ export class CustomerController {
     }
 
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
+      const customerRepository = AppDataSource.getRepository(Cliente);
       
       const existingCustomer = await customerRepository.findOne({
         where: { cpf }
@@ -79,7 +79,7 @@ export class CustomerController {
     }
 
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
+      const customerRepository = AppDataSource.getRepository(Cliente);
       const customer = await customerRepository.findOne({
         where: { id }
       });
@@ -105,7 +105,7 @@ export class CustomerController {
     const id = parseInt(req.params.id);
 
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
+      const customerRepository = AppDataSource.getRepository(Cliente);
       const customer = await customerRepository.findOne({
         where: { id }
       });

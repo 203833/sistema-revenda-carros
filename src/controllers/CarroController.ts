@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/datasource";
-import { Car } from "../entities/Car";
+import { Carro } from "../entities/Carro";
 
-export class CarController {
+export class CarroController {
   static async getAll(req: Request, res: Response) {
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const cars = await carRepository.find({
-        relations: ["sales"]
+        relations: ["vendas"]
       });
       res.status(200).json(cars);
     } catch (error) {
@@ -19,10 +19,10 @@ export class CarController {
   static async getById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const car = await carRepository.findOne({
         where: { id },
-        relations: ["sales"]
+        relations: ["vendas"]
       });
       
       if (!car) {
@@ -38,10 +38,10 @@ export class CarController {
 
   static async getAvailable(req: Request, res: Response) {
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const cars = await carRepository.find({
         where: { status: "Disponível" },
-        relations: ["sales"]
+        relations: ["vendas"]
       });
       res.status(200).json(cars);
     } catch (error) {
@@ -53,10 +53,10 @@ export class CarController {
   static async searchByBrand(req: Request, res: Response) {
     const brand = req.params.brand;
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const cars = await carRepository.find({
         where: { marca: brand },
-        relations: ["sales"]
+        relations: ["vendas"]
       });
       res.status(200).json(cars);
     } catch (error) {
@@ -73,7 +73,7 @@ export class CarController {
     }
 
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const car = carRepository.create({
         marca,
         modelo,
@@ -103,7 +103,7 @@ export class CarController {
     }
 
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const car = await carRepository.findOne({
         where: { id }
       });
@@ -134,7 +134,7 @@ export class CarController {
     const id = parseInt(req.params.id);
 
     try {
-      const carRepository = AppDataSource.getRepository(Car);
+      const carRepository = AppDataSource.getRepository(Carro);
       const car = await carRepository.findOne({
         where: { id }
       });

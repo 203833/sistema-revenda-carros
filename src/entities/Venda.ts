@@ -1,9 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Customer } from "./Customer";
-import { Car } from "./Car";
+import { Cliente } from "./Cliente";
+import { Carro } from "./Carro";
 
 @Entity()
-export class Sale {
+export class Venda {
     @PrimaryGeneratedColumn()
     id!: number
 
@@ -19,9 +19,9 @@ export class Sale {
     @Column()
     status!: number
 
-    @ManyToOne(() => Customer, (customer) => customer.sales)
-    public customer: Customer
+    @ManyToOne(() => Cliente, (cliente) => cliente.vendas)
+    public cliente: Cliente
 
-    @ManyToOne(() => Car, (car) => car.sales)
-    public car: Car
+    @ManyToOne(() => Carro, (carro) => carro.vendas)
+    public carro: Carro
 }

@@ -1,0 +1,383 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-01-08T19:50:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_healthcheck",
+      "parentId": "fld_health",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/healthcheck",
+      "name": "Health Check",
+      "description": "Verifica se a API está funcionando",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_register",
+      "parentId": "fld_auth",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/auth/register",
+      "name": "Registrar Usuário",
+      "description": "Cria um novo usuário no sistema",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nomeUsuario\": \"admin\",\n  \"senha\": \"123456\",\n  \"papel\": \"vendedor\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_login",
+      "parentId": "fld_auth",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/auth/login",
+      "name": "Login",
+      "description": "Faz login e retorna token JWT",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nomeUsuario\": \"admin\",\n  \"senha\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_listar_clientes",
+      "parentId": "fld_clientes",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/clientes",
+      "name": "Listar Clientes",
+      "description": "Lista todos os clientes",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_criar_cliente",
+      "parentId": "fld_clientes",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/clientes",
+      "name": "Criar Cliente",
+      "description": "Cria um novo cliente (requer autenticação)",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"João Silva\",\n  \"cpf\": \"12345678901\",\n  \"email\": \"joao@email.com\",\n  \"telefone\": \"11999999999\",\n  \"endereco\": \"Rua A, 123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_buscar_cliente",
+      "parentId": "fld_clientes",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/clientes/1",
+      "name": "Buscar Cliente por ID",
+      "description": "Busca um cliente específico por ID",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_listar_carros",
+      "parentId": "fld_carros",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/carros",
+      "name": "Listar Carros",
+      "description": "Lista todos os carros",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_carros_disponiveis",
+      "parentId": "fld_carros",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/carros/disponiveis",
+      "name": "Carros Disponíveis",
+      "description": "Lista apenas carros disponíveis para venda",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_criar_carro",
+      "parentId": "fld_carros",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/carros",
+      "name": "Criar Carro",
+      "description": "Cria um novo carro (requer autenticação)",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"ano\": 2020,\n  \"cor\": \"Prata\",\n  \"preco\": 85000,\n  \"quilometragem\": 15000,\n  \"tipoCombustivel\": \"Flex\",\n  \"transmissao\": \"Automático\",\n  \"status\": \"disponivel\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_listar_vendas",
+      "parentId": "fld_vendas",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/vendas",
+      "name": "Listar Vendas",
+      "description": "Lista todas as vendas",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_criar_venda",
+      "parentId": "fld_vendas",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "url": "http://localhost:3001/api/v1/vendas/1/1",
+      "name": "Criar Venda",
+      "description": "Cria uma nova venda (requer autenticação)",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"precoVenda\": 82000,\n  \"metodoPagamento\": \"À vista\",\n  \"status\": 3\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1641234567890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_health",
+      "parentId": "wrk_main",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Health Check",
+      "description": "Endpoints de verificação de saúde",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1641234567890,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_main",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Autenticação",
+      "description": "Endpoints de login e registro",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1641234567890,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_clientes",
+      "parentId": "wrk_main",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Clientes",
+      "description": "Endpoints de gerenciamento de clientes",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1641234567890,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_carros",
+      "parentId": "wrk_main",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Carros",
+      "description": "Endpoints de gerenciamento de carros",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1641234567890,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_vendas",
+      "parentId": "wrk_main",
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Vendas",
+      "description": "Endpoints de gerenciamento de vendas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1641234567890,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_main",
+      "parentId": null,
+      "modified": 1641234567890,
+      "created": 1641234567890,
+      "name": "Sistema Revenda Carros",
+      "description": "API REST para sistema de revenda de carros",
+      "scope": "collection",
+      "_type": "workspace"
+    }
+  ]
+}

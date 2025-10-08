@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/datasource";
-import { Sale } from "../entities/Sale";
-import { Customer } from "../entities/Customer";
-import { Car } from "../entities/Car";
+import { Venda } from "../entities/Venda";
+import { Cliente } from "../entities/Cliente";
+import { Carro } from "../entities/Carro";
 
-export class SaleController {
+export class VendaController {
   static async getAll(req: Request, res: Response) {
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
+      const saleRepository = AppDataSource.getRepository(Venda);
       const sales = await saleRepository.find({
-        relations: ["customer", "car"]
+        relations: ["cliente", "carro"]
       });
       res.status(200).json(sales);
     } catch (error) {
@@ -21,10 +21,10 @@ export class SaleController {
   static async getById(req: Request, res: Response) {
     const id = parseInt(req.params.id);
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
+      const saleRepository = AppDataSource.getRepository(Venda);
       const sale = await saleRepository.findOne({
         where: { id },
-        relations: ["customer", "car"]
+        relations: ["cliente", "carro"]
       });
       
       if (!sale) {
@@ -41,10 +41,10 @@ export class SaleController {
   static async getByCustomer(req: Request, res: Response) {
     const customerId = parseInt(req.params.customerId);
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
+      const saleRepository = AppDataSource.getRepository(Venda);
       const sales = await saleRepository.find({
-        where: { customer: { id: customerId } },
-        relations: ["customer", "car"]
+        where: { cliente: { id: customerId } },
+        relations: ["cliente", "carro"]
       });
       res.status(200).json(sales);
     } catch (error) {
@@ -56,10 +56,10 @@ export class SaleController {
   static async getByStatus(req: Request, res: Response) {
     const status = parseInt(req.params.status);
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
+      const saleRepository = AppDataSource.getRepository(Venda);
       const sales = await saleRepository.find({
         where: { status },
-        relations: ["customer", "car"]
+        relations: ["cliente", "carro"]
       });
       res.status(200).json(sales);
     } catch (error) {
@@ -78,9 +78,9 @@ export class SaleController {
     }
 
     try {
-      const customerRepository = AppDataSource.getRepository(Customer);
-      const carRepository = AppDataSource.getRepository(Car);
-      const saleRepository = AppDataSource.getRepository(Sale);
+      const customerRepository = AppDataSource.getRepository(Cliente);
+      const carRepository = AppDataSource.getRepository(Carro);
+      const saleRepository = AppDataSource.getRepository(Venda);
 
       const customer = await customerRepository.findOne({
         where: { id: customerId }
@@ -102,8 +102,8 @@ export class SaleController {
         precoVenda: Number(precoVenda),
         metodoPagamento,
         status: Number(status),
-        customer,
-        car
+        cliente: customer,
+        carro: car
       });
 
       await saleRepository.save(sale);
@@ -129,8 +129,8 @@ export class SaleController {
     }
 
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
-      const carRepository = AppDataSource.getRepository(Car);
+      const saleRepository = AppDataSource.getRepository(Venda);
+      const carRepository = AppDataSource.getRepository(Carro);
       
       const sale = await saleRepository.findOne({
         where: { id },
@@ -149,7 +149,7 @@ export class SaleController {
       await saleRepository.save(sale);
 
       const car = await carRepository.findOne({
-        where: { id: sale.car.id }
+        where: { id: sale.carro.id }
       });
 
       if (car) {
@@ -172,8 +172,8 @@ export class SaleController {
     const id = parseInt(req.params.id);
 
     try {
-      const saleRepository = AppDataSource.getRepository(Sale);
-      const carRepository = AppDataSource.getRepository(Car);
+      const saleRepository = AppDataSource.getRepository(Venda);
+      const carRepository = AppDataSource.getRepository(Carro);
       
       const sale = await saleRepository.findOne({
         where: { id },
@@ -186,7 +186,7 @@ export class SaleController {
 
       if (sale.status === 3) {
         const car = await carRepository.findOne({
-          where: { id: sale.car.id }
+          where: { id: sale.carro.id }
         });
         if (car) {
           car.status = "Disponível";

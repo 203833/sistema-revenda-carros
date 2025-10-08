@@ -1,21 +1,17 @@
 import { DataSource } from "typeorm"
 import dotenv from "dotenv"
-import { Customer } from "../entities/Customer";
-import { Car } from "../entities/Car";
-import { Sale } from "../entities/Sale";
-import { User } from "../entities/User";
+import { Cliente } from "../entities/Cliente";
+import { Carro } from "../entities/Carro";
+import { Venda } from "../entities/Venda";
+import { Usuario } from "../entities/Usuario";
 
 dotenv.config()
 
 export const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  type: 'sqlite',
+  database: ':memory:',
   synchronize: true,
   logging: false,
-  entities: [Customer, Car, Sale, User],
+  entities: [Cliente, Carro, Venda, Usuario],
   migrations: ['src/migrations/*.ts'],
 });

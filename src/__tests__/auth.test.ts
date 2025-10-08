@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import { AppDataSource } from '../config/datasource';
-import { User } from '../entities/User';
+import { Usuario } from '../entities/Usuario';
 import bcrypt from 'bcrypt';
 
 describe('Authentication', () => {
@@ -12,7 +12,7 @@ describe('Authentication', () => {
   });
 
   beforeEach(async () => {
-    await AppDataSource.getRepository(User).clear();
+    await AppDataSource.getRepository(Usuario).clear();
   });
 
   describe('POST /api/v1/auth/register', () => {
@@ -30,7 +30,7 @@ describe('Authentication', () => {
 
       expect(response.body.mensagem).toBe('Usuário criado com sucesso');
 
-      const user = await AppDataSource.getRepository(User).findOneBy({ nomeUsuario: 'testuser' });
+      const user = await AppDataSource.getRepository(Usuario).findOneBy({ nomeUsuario: 'testuser' });
       expect(user).toBeTruthy();
       expect(user?.nomeUsuario).toBe('testuser');
       expect(user?.papel).toBe('vendedor');
@@ -38,7 +38,7 @@ describe('Authentication', () => {
 
     it('should not register user with existing username', async () => {
       const hashedPassword = await bcrypt.hash('password123', 10);
-      await AppDataSource.getRepository(User).save({
+      await AppDataSource.getRepository(Usuario).save({
         nomeUsuario: 'testuser',
         senha: hashedPassword,
         papel: 'vendedor'
@@ -55,14 +55,14 @@ describe('Authentication', () => {
         .send(userData)
         .expect(400);
 
-      expect(response.body).toBe('Nome de usuário já existe');
+      expect(response.text).toBe('Nome de usuário já existe');
     });
   });
 
   describe('POST /api/v1/auth/login', () => {
     beforeEach(async () => {
       const hashedPassword = await bcrypt.hash('password123', 10);
-      await AppDataSource.getRepository(User).save({
+      await AppDataSource.getRepository(Usuario).save({
         nomeUsuario: 'testuser',
         senha: hashedPassword,
         papel: 'vendedor'
@@ -97,7 +97,7 @@ describe('Authentication', () => {
         .send(loginData)
         .expect(401);
 
-      expect(response.body).toBe('Credenciais inválidas');
+      expect(response.text).toBe('Credenciais inválidas');
     });
 
     it('should not login with non-existent user', async () => {
@@ -111,7 +111,7 @@ describe('Authentication', () => {
         .send(loginData)
         .expect(401);
 
-      expect(response.body).toBe('Credenciais inválidas');
+      expect(response.text).toBe('Credenciais inválidas');
     });
   });
 });

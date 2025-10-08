@@ -1,14 +1,14 @@
 import { Router } from "express"
-import customerRouter from "./CustomerRoutes"
-import carRouter from "./CarRoutes"
-import saleRouter from "./SaleRoutes"
+import customerRouter from "./ClienteRoutes"
+import carRouter from "./CarroRoutes"
+import saleRouter from "./VendaRoutes"
 import authRouter from "./AuthRoutes"
 
 const router = Router()
 
 router.use('/auth', authRouter)
-router.use('/customers', customerRouter)
-router.use('/cars', carRouter)
-router.use('/sales', saleRouter)
+router.use('/clientes', customerRouter)
+router.use('/carros', carRouter)
+router.use('/vendas', saleRouter)
 
 export default router
